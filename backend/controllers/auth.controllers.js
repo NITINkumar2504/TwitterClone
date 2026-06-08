@@ -1,4 +1,3 @@
-import express from 'express'
 import User from '../models/user.models.js'
 import bcrypt from 'bcryptjs'
 import { generateTokenAndSetCookie } from '../lib/utils/generateWebToken.js'
