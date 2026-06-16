@@ -5,6 +5,7 @@ import { v2 as cloudinary } from 'cloudinary'
 import authRoutes from './routes/auth.routes.js'
 import userRoutes from './routes/user.routes.js'
 import postRoutes from './routes/post.routes.js'
+import notificationRoutes from './routes/notification.routes.js'
 
 import { connectDB } from './db/connectMongoDB.js'
 
@@ -25,7 +26,8 @@ app.use(cookieParser())  // parse cookie from incoming HTTP requests
 
 app.use("/api/auth", authRoutes)
 app.use("/api/users", userRoutes)
-app.use("/api/posts", postRoutes) 
+app.use("/api/posts", postRoutes)
+app.use("/api/notification", notificationRoutes)
 
 app.listen(PORT, () => {
     console.log(`\nServer running at http://localhost:${process.env.PORT}`)

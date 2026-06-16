@@ -59,14 +59,14 @@ const followUnfollowUser = async (req, res) => {
                 { returnDocument : "after" }
             )
 
-            // send notification to the user
-            const newNotification = new Notification({
-                type : "unfollow",
-                from : req.user._id,
-                to : userToModify._id
-            })
+            // send notification to the user (no need to notify in case of unfollow)
+            // const newNotification = new Notification({
+            //     type : "unfollow",
+            //     from : req.user._id,
+            //     to : userToModify._id
+            // })
 
-            await newNotification.save()
+            // await newNotification.save()
 
             return res.status(200).json({ message : "User unfollowed successfully" })
         }
