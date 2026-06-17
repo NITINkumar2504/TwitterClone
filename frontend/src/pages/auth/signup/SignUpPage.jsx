@@ -2,8 +2,11 @@ import { Link } from "react-router";
 import { useState } from "react";
 
 import XSvg from "../../../components/svgs/X";
-import { MdOutlineMail, MdDriveFileRenameOutline, MdPassword } from "react-icons/md";
-import { FaUser} from "react-icons/fa";
+
+import { MdOutlineMail } from "react-icons/md";
+import { FaUser } from "react-icons/fa";
+import { MdPassword } from "react-icons/md";
+import { MdDriveFileRenameOutline } from "react-icons/md";
 
 const SignUpPage = () => {
 	const [formData, setFormData] = useState({
@@ -25,13 +28,13 @@ const SignUpPage = () => {
 	const isError = false;
 
 	return (
-		<div className='max-w-full mx-auto flex h-screen px-10'>
-			<div className='flex-1 hidden lg:flex items-center  justify-center'>
-				<XSvg className=' lg:w-2/3 fill-white' />
+		<div className='max-w-7xl mx-auto flex h-screen px-10 gap-12'>
+			<div className='flex-1 hidden md:flex items-center justify-center p-1.5'>
+				<XSvg className='md:w-full fill-white' />
 			</div>
-			<div className='flex-1 flex flex-col justify-center items-center'>
-				<form className='lg:w-2/3 mx-auto md:mx-20 flex gap-4 flex-col' onSubmit={handleSubmit}>
-					<XSvg className='w-24 lg:hidden fill-white' />
+			<div className='flex-1 flex flex-col justify-center items-center p-1'>
+				<form className='w-80 sm:w-80 mx-auto flex gap-4 flex-col' onSubmit={handleSubmit}>
+					<XSvg className='w-24 md:hidden fill-white' />
 					<h1 className='text-4xl font-extrabold text-white'>Join today.</h1>
 					<label className='input input-bordered rounded flex items-center gap-2'>
 						<MdOutlineMail />
@@ -44,10 +47,10 @@ const SignUpPage = () => {
 							value={formData.email}
 						/>
 					</label>
-					<div className='flex flex-col lg:flex-row gap-4'>
-						<label className='input input-bordered rounded flex items-center gap-2'>
+					<div className='flex gap-4'>
+						<label className='input input-bordered rounded flex items-center gap-2 flex-1'>
 							<FaUser />
-							<input	
+							<input 
 								type='text'
 								className='grow'
 								placeholder='Username'
@@ -56,7 +59,7 @@ const SignUpPage = () => {
 								value={formData.username}
 							/>
 						</label>
-						<label className='input input-bordered rounded flex items-center gap-2'>
+						<label className='input input-bordered rounded flex items-center gap-2 flex-1'>
 							<MdDriveFileRenameOutline />
 							<input
 								type='text'
@@ -82,7 +85,7 @@ const SignUpPage = () => {
 					<button className='btn rounded-full btn-primary text-white'>Sign up</button>
 					{isError && <p className='text-red-500'>Something went wrong</p>}
 				</form>
-				<div className='flex flex-col lg:w-2/3 gap-2 mt-4 mx-auto'>
+				<div className='flex flex-col w-full gap-2 mt-5'>
 					<p className='text-white text-lg'>Already have an account?</p>
 					<Link to='/login'>
 						<button className='btn rounded-full btn-primary text-white btn-outline w-full'>Sign in</button>
