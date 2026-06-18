@@ -1,7 +1,7 @@
 import { useState } from "react";
 
-// import Posts from "../../components/common/Posts";
-// import CreatePost from "./CreatePost";
+import Posts from "../../components/common/Posts";
+import CreatePost from "./CreatePost";
 
 const HomePage = () => {
 	const [feedType, setFeedType] = useState("forYou");
@@ -28,16 +28,16 @@ const HomePage = () => {
 					>
 						Following
 						{feedType === "following" && (
-							<div className='absolute bottom-0 w-10  h-1 rounded-full bg-primary'></div>
+							<div className='absolute bottom-0 w-10 h-1 rounded-full bg-primary'></div>
 						)}
 					</div>
 				</div>
 
 				{/*  CREATE POST INPUT */}
-				{/* <CreatePost /> */}
+				<CreatePost />
 
 				{/* POSTS */}
-				{/* <Posts /> */}
+				<Posts />
 			</div>
 		</>
 	);
