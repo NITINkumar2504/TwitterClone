@@ -6,7 +6,7 @@ const RightPanel = () => {
 	const isLoading = false;
 
 	return (
-		<div className='hidden lg:block my-4 mx-2'>
+		<div className='hidden lg:block my-2 mx-2'>
 			<div className='bg-[#16181C] p-4 rounded-md sticky top-2'>
 				<p className='font-bold mb-2'>Who to follow</p>
 				<div className='flex flex-col gap-4'>
@@ -34,7 +34,7 @@ const RightPanel = () => {
 									</div>
 									<div className='flex flex-col'>
 										<span className='font-semibold tracking-tight truncate w-28'>
-											{user.fullName}
+											{user.fullname}
 										</span>
 										<span className='text-sm text-slate-500'>@{user.username}</span>
 									</div>
