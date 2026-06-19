@@ -7,8 +7,7 @@ import { MdOutlineMail } from "react-icons/md";
 import { FaUser } from "react-icons/fa";
 import { MdPassword } from "react-icons/md";
 import { MdDriveFileRenameOutline } from "react-icons/md";
-import { useMutation } from "@tanstack/react-query";
-import toast from "react-hot-toast";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const SignUpPage = () => {
 	const [formData, setFormData] = useState({
@@ -17,6 +16,8 @@ const SignUpPage = () => {
 		fullname: "",
 		password: "",
 	});
+
+	const queryClient = useQueryClient()
 
 	const {mutate, isError, isPending, error} = useMutation({
 		mutationFn : async ({email, username, fullname, password}) => {
@@ -31,7 +32,7 @@ const SignUpPage = () => {
 
 				const data = await res.json();
 				if(!res.ok || data.error) throw new Error(data.error || "Something went wrong")		
-				console.log(data)
+				// console.log(data)
 				return data
 			} 
 			catch (error) {
@@ -40,13 +41,21 @@ const SignUpPage = () => {
 			}
 		},
 		onSuccess : () => {
-			toast.success("Account created successfully")
+			queryClient.invalidateQueries({queryKey : ["authUser"]})
 		}
 	})
 
 	const handleSubmit = (e) => {
 		e.preventDefault();    // page won't reload
-		mutate(formData)
+
+		const payload = {
+			email: formData.email.trim(),
+			username: formData.username.trim(),
+			fullname: formData.fullname.trim(),
+			password: formData.password.trim(),
+		};
+		
+		mutate(payload)
 	};
 
 	const handleInputChange = (e) => {

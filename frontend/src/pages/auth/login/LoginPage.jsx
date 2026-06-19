@@ -4,8 +4,7 @@ import { Link } from "react-router";
 import XSvg from "../../../components/svgs/X";
 
 import { MdPassword } from "react-icons/md";
-import { useMutation } from "@tanstack/react-query";
-import toast from "react-hot-toast";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { FaUser } from "react-icons/fa";
 
 
@@ -14,6 +13,8 @@ const LoginPage = () => {
 		username: "",
 		password: "",
 	});
+
+	const queryClient = useQueryClient()
 
 	const {mutate : loginMutation, isError, isPending, error } = useMutation({
 		mutationFn : async ({username, password}) => {
@@ -28,22 +29,29 @@ const LoginPage = () => {
 
 				const data = await res.json();
 				if(!res.ok || data.error) throw new Error(data.error || "Something went wrong")
-				console.log(data)
+				// console.log(data)
 				return data
 			} 
 			catch (error) {
-				console.error(error)
+				console.log(error)
 				throw error	
 			}
 		},
 		onSuccess : () => {
-			toast.success("Welcome back!")
+			// refetch the authUser (run the authUser query in app.jsx), queryClient.invalidateQueries method. This marks specific cached data as stale, forcing any active queries to automatically refetch in the background so your UI stays synchronized with your backend
+			queryClient.invalidateQueries({queryKey : ["authUser"]})
 		}
 	})
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		loginMutation(formData)
+
+		const payload = {
+			username: formData.username.trim(),
+			password: formData.password.trim(),
+		};
+
+		loginMutation(payload)
 	};
 
 	const handleInputChange = (e) => {
