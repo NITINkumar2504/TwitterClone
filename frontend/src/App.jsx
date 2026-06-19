@@ -9,6 +9,8 @@ import NotificationPage from "./pages/notification/Notification"
 import Sidebar from "./components/common/SideBar"
 import RightPanel from "./components/common/RightPanel"
 
+import { Toaster } from "react-hot-toast"
+
 
 function App() {
   
@@ -16,7 +18,6 @@ function App() {
       	<div className='flex max-w-6xl mx-auto'>
 			{/* common component */}
 			<Sidebar/>
-			
 			<Routes>
 				<Route path='/' element={<HomePage />} />
 				<Route path='/signup' element={<SignUpPage />} />
@@ -24,8 +25,8 @@ function App() {
 				<Route path='/notifications' element={<NotificationPage />} />
 				<Route path="/profile/:username" element={<ProfilePage />} />
 			</Routes>
-
 			<RightPanel/>
+			<Toaster/>
 		</div>
   )
 }
