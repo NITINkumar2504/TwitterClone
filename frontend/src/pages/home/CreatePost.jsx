@@ -8,7 +8,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 const CreatePost = () => {
   const [text, setText] = useState("");
-  const [img, setImg] = useState(null);
+  const [image, setImage] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
   const [showError, setShowError] = useState(false);
   const imgRef = useRef(null);
@@ -19,14 +19,14 @@ const CreatePost = () => {
   const queryClient = useQueryClient()
 
   const {mutate : createPost, isPending} = useMutation({
-    mutationFn : async ({text, img}) => {
+    mutationFn : async ({text, image}) => {
       try {
         const res = await fetch("/api/posts/create", {
           method : "POST",
           headers : {
             "Content-Type" : "application/json"
           },
-          body : JSON.stringify({text, img})
+          body : JSON.stringify({text, image})
         })
 
         const data = await res.json()
@@ -41,20 +41,20 @@ const CreatePost = () => {
     },
     onSuccess : () => {
       setText("")
-      setImg(null)
+      setImage(null)
       toast.success("Post created succesfullyy")
       queryClient.invalidateQueries({queryKey : ["posts"]})
     },
     onError: (error) => {
       setErrorMessage(error.message);
       setShowError(true);
-      setTimeout(() => setShowError(false), 2000);
+      setTimeout(() => setShowError(false), 3000);
     },
   }) 
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    createPost({text, img})
+    createPost({text, image})
   };
 
   const handleImgChange = (e) => {
@@ -62,7 +62,7 @@ const CreatePost = () => {
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
-        setImg(reader.result);
+        setImage(reader.result);
       };
       reader.readAsDataURL(file);
     }
@@ -83,17 +83,17 @@ const CreatePost = () => {
           onChange={(e) => setText(e.target.value)}
         />
         
-        {img && (
+        {image && (
           <div className="relative w-72 mx-auto">
             <IoCloseSharp
               className="absolute top-0 right-1.5 text-white bg-gray-600 rounded-full w-5 h-5 cursor-pointer"
               onClick={() => {
-                setImg(null);
+                setImage(null);
                 imgRef.current.value = null;
               }}
             />
             <img
-              src={img}
+              src={image}
               className="w-full mx-auto h-72 object-contain rounded"
             />
           </div>
