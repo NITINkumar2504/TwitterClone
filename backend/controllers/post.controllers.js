@@ -188,10 +188,6 @@ const getLikedPosts = async (req, res) => {
 
         const likedPosts = await Post.find({_id : {$in : user.likedPosts}}).populate({ path : "user", select : "-password"}).populate({ path : "comments.user", select : "-password"})
 
-        if(likedPosts.length === 0){    
-            return res.status(200).json({ message : "You have not liked any post yet"})
-        }
-
         return res.status(200).json(likedPosts)
     } 
     catch (error) {
