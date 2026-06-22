@@ -26,7 +26,7 @@ function App() {
 				if(data.error) return null // it helps in logging out the user
 
 				if(!res.ok) throw new Error(data.error || "Something went wrong")
-				console.log("auth user:", data)
+				// console.log("auth user:", data)
 				return data
 			} 
 			catch (error) {

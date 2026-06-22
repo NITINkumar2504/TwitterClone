@@ -18,7 +18,7 @@ const RightPanel = () => {
 			} 
 			catch (error) {
 				console.error(error)
-				throw new error
+				throw error
 			}
 		}
 	})
