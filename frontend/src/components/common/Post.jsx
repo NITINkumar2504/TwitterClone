@@ -8,6 +8,7 @@ import { Link } from "react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast"
 import LoadingSpinner from "./LoadingSpinner";
+import { formatPostDate } from "../../utils/date";
 
 const Post = ({ post }) => {
 	const [comment, setComment] = useState("");
@@ -15,6 +16,11 @@ const Post = ({ post }) => {
 	const {data : authUser} = useQuery({
 		queryKey : ["authUser"]
 	})
+
+	const postOwner = post.user;
+	const isLiked = post.likes.includes(authUser._id);
+	const isMyPost = authUser._id === post.user._id;
+	const formattedDate = formatPostDate(post.createdAt)
 
 	const queryClient = useQueryClient()
 
@@ -80,14 +86,58 @@ const Post = ({ post }) => {
 		}
 	})
 
-	const postOwner = post.user;
-	const isLiked = post.likes.includes(authUser._id);
-	
-	const isMyPost = authUser._id === post.user._id;
+	const {mutate:commentPost, isPending:isCommenting} = useMutation({
+		mutationFn : async () => {
+			try {
+				const res = await fetch(`/api/posts/comment/${post._id}`,{
+					method : "POST",
+					headers : {
+						"Content-Type" : "application/json",
+					},
+					body : JSON.stringify({ text : comment})
+				})
+				const data = await res.json()
+				if(!res.ok) throw new Error(data.error || "Something went wrong")
+				return data
+			} 
+			catch (error) {
+				console.error(error)
+				throw error
+			}
+		},
+		onSuccess : (updatedPost) => {
+			toast.success("Comment posted successfully")
+			setComment("")
+			queryClient.setQueryData(["posts"], (oldData) => {
+				return oldData.map((p) => {
+					if (p._id === post._id) {
+						return { ...p, comments: updatedPost.comments }
+					}
+					return p
+				})
+			})
 
-	const formattedDate = "1h";
+			document.getElementById("comments_modal" + post._id)?.close()
 
-	const isCommenting = false;
+			// it does not re-fetch the whole
+			// What actually happens
+			// commentPost mutation sends the request to /api/posts/comment/${post._id}.
+			// The backend returns the updated post object.
+			// onSuccess receives that updated post.
+			// queryClient.setQueryData(["posts"], ...) takes the existing cached posts array and replaces only the matching post entry.
+			// keep every post unchanged except the one with the same _id
+			// for that one post, keep all fields the same, but replace only comments
+
+			// queryClient.setQueryData(["posts"], (oldData) =>
+			// 	oldData.map((p) =>
+			// 		p._id === post._id ? { ...p, comments: updatedPost.comments } : p
+			// 	)
+			// )
+		},
+		onError : (error) => {
+			toast.error(error.message)
+		}
+	})
 
 	const handleDeletePost = () => {
 		deletePost()
@@ -95,10 +145,12 @@ const Post = ({ post }) => {
 
 	const handlePostComment = (e) => {
 		e.preventDefault();
+		if(isCommenting) return
+		commentPost()
 	};
 
 	const handleLikePost = () => {
-		if(isLiking) return // if we try to like a post again, when the first operation is still not finished 
+		if(isLiking) return // if we try to like a post again, return until the first operation is still not finished 
 		likePost()
 	};
 
@@ -113,7 +165,7 @@ const Post = ({ post }) => {
 				<div className='flex flex-col flex-1'>
 					<div className='flex gap-2 items-center'>
 						<Link to={`/profile/${postOwner.username}`} className='font-bold'>
-							{postOwner.fullName}
+							{postOwner.fullname}
 						</Link>
 						<span className='text-gray-700 flex gap-1 text-sm'>
 							<Link to={`/profile/${postOwner.username}`}>@{postOwner.username}</Link>
@@ -173,7 +225,7 @@ const Post = ({ post }) => {
 												</div>
 												<div className='flex flex-col'>
 													<div className='flex items-center gap-1'>
-														<span className='font-bold'>{comment.user.fullName}</span>
+														<span className='font-bold'>{comment.user.fullname}</span>
 														<span className='text-gray-700 text-sm'>
 															@{comment.user.username}
 														</span>
