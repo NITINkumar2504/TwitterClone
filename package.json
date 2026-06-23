@@ -4,8 +4,9 @@
   "description": "Twitter Clone",
   "main": "backend/server.js",
   "scripts": {
-    "dev": "nodemon --env-file=.env backend/server.js",
-    "start": "node --env-file=.env backend/server.js"
+    "dev": "cross-env NODE_ENV=development nodemon --env-file=.env backend/server.js",
+    "start": "cross-env NODE_ENV=production node --env-file=.env backend/server.js",
+    "build": "npm install && npm install --prefix frontend && npm run build --prefix frontend"
   },
   "keywords": [],
   "author": "",
@@ -16,6 +17,7 @@
     "cloudinary": "^2.10.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
+    "cross-env": "^10.1.0",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
