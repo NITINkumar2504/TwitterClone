@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Link, useParams } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 
@@ -6,11 +6,14 @@ import Posts from "../../components/common/Posts";
 import ProfileHeaderSkeleton from "../../components/skeletons/ProfileHeaderSkeleton";
 import EditProfileModal from "./EditProfileModal";
 import { formatMemberSinceDate } from "../../utils/date";
+import useFollow from "../../hooks/useFollow";
 
 import { FaArrowLeft } from "react-icons/fa6";
 import { IoCalendarOutline } from "react-icons/io5";
 import { FaLink } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
+import useUpdateProfile from "../../hooks/useUpdateProfile";
+import toast from "react-hot-toast";
 
 
 const ProfilePage = () => {
@@ -21,10 +24,11 @@ const ProfilePage = () => {
 	const coverImgRef = useRef(null);
 	const profileImgRef = useRef(null);
 	const { username } = useParams()
-	const isMyProfile = true;
+	const { followUnfollow, isPending } = useFollow()
 	
-	const {data:user, isLoading, refetch, isRefetching} = useQuery({
-		queryKey:["userProfile"],    // include username in the query key so React Query treats each profile separately: Then you can remove the manual useEffect(refetch)
+	const {data:user, isLoading, isRefetching} = useQuery({
+		queryKey:["userProfile", username],  // include username in the query key so React Query treats each profile separately: Then you can remove the manual useEffect(refetch)
+		// when username changes, React Query treats the query key as a new cache entry and fetches data for that new key. Changing username changes the key, and React Query will fetch the new profile.
 		queryFn : async () => {
 			try {
 				const res = await fetch(`/api/users/profile/${username}`)
@@ -39,10 +43,21 @@ const ProfilePage = () => {
 		}
 	})
 
+	const{data:authUser} = useQuery({queryKey:["authUser"]})
+
+	const { updateProfile, isUpdating} = useUpdateProfile()
+
+	const isMyProfile = authUser?._id === user?._id
 	const memberSinceDate = formatMemberSinceDate(user?.createdAt)
+	// const amIfollowing = user?.followers.includes(authUser._id)
+	const amIfollowing = authUser?.following.includes(user?._id)
+	
 
 	const handleImgChange = (e, state) => {
 		const file = e.target.files[0];
+		if (file && file.size > 5 * 1024 * 1024) {
+			return toast.error("Image is too large. Max size is 5MB.")
+		}
 		if (file) {
 			const reader = new FileReader();
 			reader.onload = () => {
@@ -52,10 +67,6 @@ const ProfilePage = () => {
 			reader.readAsDataURL(file);
 		}
 	};
-
-	useEffect(() => {
-		refetch()
-	}, [username, refetch])
 
 	return (
 		<>
@@ -125,17 +136,23 @@ const ProfilePage = () => {
 								{!isMyProfile && (
 									<button
 										className='btn btn-outline rounded-full btn-sm'
-										onClick={() => alert("Followed successfully")}
+										onClick={() => followUnfollow(user?._id)}
 									>
-										Follow
+										{isPending && "Loading..."}
+										{!isPending && amIfollowing && "Unfollow"}
+										{!isPending && !amIfollowing && "follow"}
 									</button>
 								)}
 								{(coverImg || profileImg) && (
 									<button
 										className='btn btn-primary rounded-full btn-sm text-white px-4 ml-2'
-										onClick={() => alert("Profile updated successfully")}
+										onClick={async () => {
+											await updateProfile({coverImg, profileImg})
+											setCoverImg(null)
+											setProfileImg(null)
+										}}
 									>
-										Update
+										{isUpdating ? "Updating..." : "Update"}
 									</button>
 								)}
 							</div>
