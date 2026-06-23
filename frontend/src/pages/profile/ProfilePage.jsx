@@ -51,6 +51,7 @@ const ProfilePage = () => {
 	const memberSinceDate = formatMemberSinceDate(user?.createdAt)
 	// const amIfollowing = user?.followers.includes(authUser._id)
 	const amIfollowing = authUser?.following.includes(user?._id)
+	const link = user?.link?.startsWith("http") ? user.link : `https://${user?.link}`
 	
 
 	const handleImgChange = (e, state) => {
@@ -81,10 +82,7 @@ const ProfilePage = () => {
 								<Link to='/'>
 									<FaArrowLeft className='w-4 h-4' />
 								</Link>
-								<div className='flex flex-col'>
-									<p className='font-bold text-lg'>{user?.fullname}</p>
-									<span className='text-sm text-slate-500'> posts</span>
-								</div>
+								<p className='font-bold text-lg py-2'>{user?.fullname}</p>
 							</div>
 							{/* COVER IMG */}
 							<div className='relative group/cover'>
@@ -120,14 +118,14 @@ const ProfilePage = () => {
 								<div className='avatar absolute -bottom-16 left-4'>
 									<div className='w-32 rounded-full relative group/avatar'>
 										<img src={profileImg || user?.profileImg || "/avatar-placeholder.png"} />
-										<div className='absolute top-5 right-3 p-1 bg-primary rounded-full group-hover/avatar:opacity-100 opacity-0 cursor-pointer'>
 											{isMyProfile && (
+												<div className='absolute top-5 right-3 p-1 bg-primary rounded-full group-hover/avatar:opacity-100 opacity-0 cursor-pointer'>
 												<MdEdit
 													className='w-4 h-4 text-white'
 													onClick={() => profileImgRef.current.click()}
 												/>
+												</div>
 											)}
-										</div>
 									</div>
 								</div>
 							</div>
@@ -169,13 +167,14 @@ const ProfilePage = () => {
 										<div className='flex gap-1 items-center '>
 											<>
 												<FaLink className='w-3 h-3 text-slate-500' />
+												
 												<a
-													href='https://youtube.com/@asaprogrammer_'
+													href={link}
 													target='_blank'
 													rel='noreferrer'
 													className='text-sm text-blue-500 hover:underline'
 												>
-													youtube.com/@asaprogrammer_
+													{user?.link}
 												</a>
 											</>
 										</div>
