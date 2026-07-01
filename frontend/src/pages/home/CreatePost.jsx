@@ -60,6 +60,7 @@ const CreatePost = () => {
   const handleImgChange = (e) => {
     const file = e.target.files[0];
     if (file && file.size > 5 * 1024 * 1024) {
+      e.target.value = ""
 			return toast.error("Image is too large. Max size is 5MB.")
 		}
     if (file) {
