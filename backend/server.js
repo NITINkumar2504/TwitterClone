@@ -3,7 +3,7 @@ import cookieParser from 'cookie-parser'
 import { v2 as cloudinary } from 'cloudinary'
 import path from "path"
 import cors from 'cors'
-import job from './lib/cron.js'
+// import job from './lib/cron.js'
 
 import authRoutes from './routes/auth.routes.js'
 import userRoutes from './routes/user.routes.js'
@@ -49,7 +49,7 @@ app.listen(PORT, () => {
     console.log(`\nServer running at http://localhost:${process.env.PORT}`)
     connectDB()
 
-    if(process.env.NODE_ENV === 'production'){
-        job.start()
-    }
+    // if(process.env.NODE_ENV === 'production'){
+    //     job.start()
+    // }
 })
